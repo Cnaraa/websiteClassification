@@ -1528,4 +1528,9 @@
     "url": "https://runebook.dev/ru/docs/cmake/guide/ide-integration/index",
     "label": "Интеграция IDE"
 }
-]
+]{
+    "title": "Основы машинного обучения (machine learning) / Skillbox Media",
+    "description": "Что такое машинное обучение (machine learning) и как оно устроено: типы, задачи, назначение, возможности и примеры использования.",
+    "url": "https://skillbox.ru/media/code/kak-ustroeno-mashinnoe-obuchenie-zadachi-algoritmy-i-vidy-machine-learning/",
+    "label": null
+}
