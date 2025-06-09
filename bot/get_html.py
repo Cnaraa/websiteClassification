@@ -17,7 +17,7 @@ def create_driver():
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--ignore-certificate-errors")
     options.add_argument("--disable-ssl-errors")
-    options.add_argument("--headless")  # Режим без графического интерфейса
+    options.add_argument("--headless")
     logging.getLogger('selenium').setLevel(logging.WARNING)
 
     PATH = r'C:\\Study\\Python\\WebsiteClassification\\bot\\chromedriver.exe'
@@ -25,7 +25,7 @@ def create_driver():
     try:
         service = Service(executable_path=PATH)
         driver = webdriver.Chrome(service=service, options=options)
-        driver.set_page_load_timeout(30)  # Увеличен таймаут загрузки страницы
+        driver.set_page_load_timeout(30)
         return driver
     except Exception as ex:
         logging.error(f"Не удалось создать драйвер: {ex}")
