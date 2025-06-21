@@ -8,7 +8,7 @@ from states import WAITING_FOR_SEARCH_QUERY
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
-    if text == "Поиск по базе":
+    if text == "Поиск по базе данных":
         await update.message.reply_text("Введите тему или ключевые слова:")
         return WAITING_FOR_SEARCH_QUERY
 
@@ -24,7 +24,7 @@ async def handle_search_query(update: Update, context: ContextTypes.DEFAULT_TYPE
     from semantic_search import load_all_articles, build_embeddings, search
     articles = load_all_articles()
     if not articles:
-        await update.message.reply_text("База данных пустая. Сначала соберите данные.")
+        await update.message.reply_text("Нет данных")
         return ConversationHandler.END
 
     _, embeddings = build_embeddings(articles)
@@ -36,9 +36,9 @@ async def handle_search_query(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     for res in results:
         msg = f"""
-<b>{res['title']}</b>
+{res['title']}
 {res['url']}
-{res['description'][:100]}...
+{res['summary']}
 Тема: {res['topic']}
         """
         await update.message.reply_html(msg)

@@ -4,6 +4,6 @@ from config import GITHUB_LINK
 
 async def handle_dev_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
-    if text == "Для разработчиков":
-        await update.message.reply_text(f"Ссылка для разработчиков: {GITHUB_LINK}")
+    if text == "Получить информацию о модели":
+        await update.message.reply_text(f"Ссылка на модель классификации: {GITHUB_LINK}")
         return ConversationHandler.END
