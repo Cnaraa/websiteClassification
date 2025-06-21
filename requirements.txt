@@ -1,0 +1,28 @@
+# Базовые зависимости
+selenium>=4.0.0
+beautifulsoup4>=4.0.0
+requests>=2.25.0
+pandas>=1.0.0
+numpy>=1.26.0
+matplotlib>=3.5.0
+
+# Для машинного перевода
+transformers>=4.30.0
+torch>=1.13.1
+
+# Для нейросетевой модели
+tensorflow>=2.10.0
+scikit-learn>=1.0.0
+imbalanced-learn>=0.9.0
+
+# Для работы с моделью и лемматизацией
+sentence-transformers>=2.2.0
+nltk>=3.5
+pymystem3>=0.2.0
+
+# Для Telegram-бота
+python-telegram-bot==13.15
+
+# Для предобработки и логирования
+langdetect==1.0.8
+timeout-decorator>=2.2.0
