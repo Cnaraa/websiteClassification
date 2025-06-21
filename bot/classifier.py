@@ -25,16 +25,15 @@ def load_components():
                 'FocalLoss': FocalLoss 
             }
         )
-        print("Модель успешно загружена.")
+        print("Модель загружена.")
         
         with open(tokenizer_path, 'rb') as f:
             tokenizer = pickle.load(f)
-        print("Токенизатор успешно загружен.")
+        print("Токенизатор загружен.")
         
-        # Загрузка кодировщика меток
         with open(label_encoder_path, 'rb') as f:
             label_encoder = pickle.load(f)
-        print("Кодировщик меток успешно загружен.")
+        print("Кодировщик меток загружен.")
     
     except FileNotFoundError as ex:
         print(f"Ошибка: Файл не найден - {ex}")
@@ -45,7 +44,7 @@ def load_components():
 
 def classify_text(title, description):
     if not title or not description:
-        raise ValueError("Заголовок и описание не должны быть пустыми.")
+        raise ValueError("Заголовок и описание пустые")
     
     text = f"{title} {description}"
     print(f"Исходный текст: {text}")
@@ -56,7 +55,7 @@ def classify_text(title, description):
     sequence = tokenizer.texts_to_sequences([preprocessed_text])
     
     if not sequence or not sequence[0]:
-        raise ValueError("Текст не содержит известных токенов. Убедитесь, что токенизатор был обучен на аналогичных данных.")
+        raise ValueError("Текст не содержит известных токенов")
     
     padded_sequence = tf.keras.preprocessing.sequence.pad_sequences(
         sequence, maxlen=MAX_SEQUENCE_LENGTH, padding='post', truncating='post'
