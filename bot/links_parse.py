@@ -10,48 +10,98 @@ import random
 import pandas as pd
 import os
 
-#Настройки
-SEARCH_TOPICS = [
-    "Искусственный интеллект и машинное обучение",
-    "Компьютерное зрение и распознавание образов",
-    "Обработка естественного языка",
-    "Фундаментальные основы CS",
-    "Криптография и безопасность",
-    "Распределённые и параллельные вычисления",
-    "Человеко-компьютерное взаимодействие",
-    "Компьютеры и общество",
-    "Информационный поиск",
-    "Робототехника"
+# Настройки
+SEARCH_QUERIES = [
+    {
+        "topic": "Компьютерное зрение и распознавание образов",
+        "queries": [
+            "Компьютерное зрение и распознавание образов",
+            "основные методы и алгоритмы компьютерного зрения"
+        ]
+    },
+    {
+        "topic": "Фундаментальные основы CS",
+        "queries": [
+            "Фундаментальные основы computer science",
+            "алгоритмы, структуры данных и вычислительная сложность"
+        ]
+    },
+    {
+        "topic": "Криптография и безопасность информации",
+        "queries": [
+            "Криптография и безопасность информации",
+            "методы шифрования и защиты данных в цифровой среде"
+        ]
+    },
+    {
+        "topic": "Компьютеры и общество",
+        "queries": [
+            "Компьютеры и общество",
+            "этические и правовые вопросы цифровизации общества"
+        ]
+    },
+    {
+        "topic": "Искусственный интеллект и машинное обучение",
+        "queries": [
+            "Искусственный интеллект и машинное обучение",
+            "как работают алгоритмы машинного обучения и где они применяются"
+        ]
+    },
+    {
+        "topic": "Обработка естественного языка",
+        "queries": [
+            "Обработка естественного языка",
+            "применение NLP в реальных задачах анализа текста"
+        ]
+    },
+    {
+        "topic": "Распределённые и параллельные вычисления",
+        "queries": [
+            "Распределённые и параллельные вычисления",
+            "архитектура систем с распределённой обработкой данных"
+        ]
+    },
+    {
+        "topic": "Робототехника",
+        "queries": [
+            "Робототехника",
+            "роботы и их применение в промышленности и быту"
+        ]
+    },
+    {
+        "topic": "Информационный поиск",
+        "queries": [
+            "Информационный поиск",
+            "алгоритмы ранжирования и индексации в поисковых системах"
+        ]
+    },
+    {
+        "topic": "Человеко-компьютерное взаимодействие",
+        "queries": [
+            "Человеко-компьютерное взаимодействие",
+            "оценка удобства и эффективности взаимодействия с программным обеспечением"
+        ]
+    }
 ]
 
-NUM_PAGES = 15
-base_url = "https://ya.ru/search/ "
-lr = "213"  #регион: Москва
+NUM_PAGES = 5
+base_url = "https://ya.ru/search/" 
+lr = "213"  # регион: Москва
 OUTPUT_FILE = "all_links.csv"
 
-#Список нежелательных доменов
+#Нежелательные домены
 BAD_DOMAINS = {
-    #Видео
     'youtube.com', 'youtu.be', 'rutube.ru', 'vimeo.com', 'dailymotion.com',
-    #Соцсети
     'vk.com', 'telegram.org', 't.me', 'instagram.com', 'facebook.com',
     'twitter.com', 'x.com', 'ok.ru', 'pinterest.com',
-    #Магазины
-    'aliexpress.', 'amazon.', 'wildberries', 'ozon.', 'my-shop.', 'labirint.',
+    'aliexpress.', 'amazon.', 'wildberries', 'ozon.', 'my-shop.ru', 'labirint.',
     'chitai-gorod.', 'gearbest.', 'market.yandex.', 'shop.', 'store.',
-    #Форумы / Блоги
-    'wordpress.'
-    #Реклама / трекеры
+    'blogspot.', 'livejournal.', 'habr.', 'medium.', 'tumblr.', 'wordpress.',
     'taboola', 'yabs.', 'clck.', 'ad.mail.ru', 'googleadservices.',
-    #Новости / медиа
     'news', 'gazeta.', 'lenta.', 'kommersant.', 'rbc.', 'forbes.', '161.ru',
-    #Прочее
-    'telegram.', 'gov.ru', 'student.zoomru.ru', 'nikulya.'
+    'wikiwand.', 'telegram.', 'gov.ru', 'student.zoomru.ru', 'nikulya.ru', 'koriolan404.narod.ru', 'monoreel.ru',
+    'gpntb.ru', 'lab314.brsu.by', 'toglht.ru', 'profbeckman.narod.ru', 'fips.'
 }
-
-#Создание папок
-if not os.path.exists("collected_links"):
-    os.makedirs("collected_links")
 
 #Настройки Selenium
 def setup_browser():
@@ -59,9 +109,9 @@ def setup_browser():
     options = Options()
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
-    
-    #Антибот-защита
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0 Safari/537.36")
+
+    # Антибот-защита
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
@@ -69,39 +119,41 @@ def setup_browser():
     service = Service(executable_path=PATH)
     driver = webdriver.Chrome(service=service, options=options)
 
-    #Скрываем следы автоматизации
+    # Скрываем следы автоматизации
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     return driver
 
+
 #Генерация случайной паузы
-def random_pause(min_sec=5, max_sec=8):
+def random_pause(min_sec=1, max_sec=2):
     pause = random.uniform(min_sec, max_sec)
     print(f"Пауза {pause:.2f} секунд...")
     time.sleep(pause)
 
-#Ожидание решения CAPTCHA вручную
+
+#Ожидание решения капчи вручную
 def wait_for_captcha(driver):
     try:
-        print("🔍 Проверяем наличие CAPTCHA...")
+        print("Проверяем наличие капчи")
         captcha_element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//div[contains(text(), "Подтвердите, что вы не робот")]'))
         )
         if captcha_element:
-            print("Обнаружена CAPTCHA. Подтвердите, что вы не робот.")
-            input("Нажмите Enter после прохождения CAPTCHA...")
+            print("Обнаружена Капча.")
 
-            #Ждём продолжения загрузки результатов
+            # Ждём продолжения загрузки результатов
             WebDriverWait(driver, 60).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, 'li.serp-item_card[data-fast="1"]'))
             )
-            print("Продолжаем работу после CAPTCHA")
+            print("Продолжаем работу после Капча")
             return True
     except Exception as e:
-        print("CAPTCHA не найдена — продолжаем автоматически")
+        print("Капча не найдена")
         return False
 
-#Парсинг страницы выдачи
-def parse_yandex_results(html, topic):
+
+# Парсинг страницы выдачи
+def parse_yandex_results(html, topic_label):
     soup = BeautifulSoup(html, 'html.parser')
     links = []
 
@@ -109,46 +161,52 @@ def parse_yandex_results(html, topic):
     for item in items:
         try:
             link_tag = item.select_one('a.link')
-            if link_tag and 'href' in link_tag.attrs:
-                link = link_tag['href']
+            if not link_tag or 'href' not in link_tag.attrs:
+                continue
 
-                # Проверяем, содержит ли ссылка BAD_DOMAIN
-                if any(domain in link for domain in BAD_DOMAINS):
-                    print(f"Пропущена ссылка: {link} (недопустимый домен)")
-                    continue
+            link = link_tag['href']
 
-                if link.startswith("https://"):
-                    links.append({"url": link, "topic": topic})
+            # Фильтр по доменам
+            if any(domain in link for domain in BAD_DOMAINS):
+                print(f"Пропущена ссылка: {link} (недопустимый домен)")
+                continue
+
+            if not link.startswith("https://"): 
+                continue
+
+            links.append({"url": link, "topic": topic_label})
+
         except Exception as e:
             print(f"Ошибка при парсинге элемента: {e}")
             continue
 
     return links
 
-#Сбор ссылок по одной запросу
-def collect_links(query, num_pages=5, lr="213"):
+
+#Сбор ссылок по одной поисковой фразе
+def collect_links(query, topic_label, num_pages=5, lr="213"):
     driver = setup_browser()
     collected_data = []
 
     try:
         for page in range(num_pages):
             url = f"{base_url}?text={query}&lr={lr}&p={page}"
-            print(f"\n--- Тема: '{query}' | Страница {page + 1}: {url}")
+            print(f"\n--- Запрос: '{query}' | Страница {page + 1}: {url}")
 
             driver.get(url)
 
-            # Ждём появления карточек
+            #Ждём появления карточек
             try:
                 WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, 'li.serp-item_card'))
                 )
 
+                #Если есть капча — ждём решения
                 wait_for_captcha(driver)
 
                 html = driver.page_source
-                new_links = parse_yandex_results(html, query.replace(" ", "_"))
+                new_links = parse_yandex_results(html, topic_label)
                 print(f"Найдено ссылок на странице: {len(new_links)}")
-
                 collected_data.extend(new_links)
 
             except Exception as e:
@@ -159,27 +217,31 @@ def collect_links(query, num_pages=5, lr="213"):
     finally:
         driver.quit()
 
-    #Добавление данных в общий файл
+    #Сохранение в CSV
     df_new = pd.DataFrame(collected_data)
 
     if os.path.exists(OUTPUT_FILE):
         df_old = pd.read_csv(OUTPUT_FILE)
-        old_urls = set(df_old['url'].values)
-        df_new = df_new[~df_new['url'].isin(old_urls)]
-        print(f"Найдены дубликаты — пропускаем {len(collected_data) - len(df_new)} ссылок")
+        seen_pairs = set(zip(df_old["url"], df_old["topic"]))
+        df_new = df_new[~df_new.apply(lambda row: (row["url"], row["topic"]) in seen_pairs, axis=1)]
+        print(f"Осталось: {len(df_new)} уникальных ссылок")
     else:
         print("Создаётся новый файл")
 
     if not df_new.empty:
-        df_new.to_csv(OUTPUT_FILE, index=False, encoding="utf-8-sig", mode='a', header=not os.path.exists(OUTPUT_FILE))
+        df_new.to_csv(OUTPUT_FILE, index=False, mode='a', header=not os.path.exists(OUTPUT_FILE), encoding="utf-8-sig")
         print(f"Добавлено новых ссылок: {len(df_new)}")
     else:
         print("Новых ссылок для добавления нет.")
 
+
 #Запуск сбора по всем темам
 if __name__ == "__main__":
-    seen_urls = set()
+    for entry in SEARCH_QUERIES:
+        topic_label = entry["topic"]
+        queries = entry["queries"]
 
-    for topic in SEARCH_TOPICS:
-        print(f"\nНачинаем сбор по теме: {topic}")
-        collect_links(topic, num_pages=NUM_PAGES, lr=lr)
+        print(f"\nНачинаем сбор по теме: {topic_label}")
+        for query in queries:
+            print(f"Выполняется поиск: '{query}'")
+            collect_links(query=query, topic_label=topic_label, num_pages=NUM_PAGES, lr=lr)

@@ -3,23 +3,25 @@ import sqlite3
 import torch
 
 #Инициализация модели
+DB_PATH = r'C:\Study\Python\WebsiteClassification\bot\data.db'
 model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
 
 def load_all_articles():
     """Загружает все статьи из БД"""
-    conn = sqlite3.connect("data.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT url, title, description, summary, topic FROM articles")
+    cursor.execute("SELECT url, title, description, summary, topic, is_secure FROM articles")
     rows = cursor.fetchall()
     conn.close()
 
     articles = []
     for row in rows:
-        url, title, description, summary, topic = row
+        url, title, description, summary, topic, is_secure = row
         combined_text = f"{title} {description} {summary}"
         articles.append({
             "url": url,
             "title": title,
+            "is_secure": is_secure,
             "description": description,
             "summary": summary,
             "topic": topic,

@@ -5,13 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
 from bs4.element import Comment
-import logging
 import time
-import re
-import json
-import urllib.parse
-import html
-from lxml import html as lxml_html
 import pandas as pd
 
 
@@ -22,7 +16,6 @@ def create_driver():
   options.add_argument("--ignore-certificate-errors")
   options.add_argument("--disable-ssl-errors")
   options.add_argument("--headless")
-  logging.getLogger('selenium').setLevel(logging.WARNING)
 
   PATH = ''
 
@@ -136,7 +129,6 @@ def main():
       print(f"Data saved to '{filename}'")
 
   finally:
-    driver.close()
     driver.quit()
 
 
